@@ -11,36 +11,71 @@
 
 #include <stdio.h>
 
-volatile int frame = 0;
+//ASSETS
+#include <fury.h>
 
-//---------------------------------------------------------------------------------
-void Vblank() {
-//---------------------------------------------------------------------------------
-	frame++;
-}
+enum {SCREEN_TOP = 0, SCREEN_BOTTOM = 192, SCREEN_LEFT = 0, SCREEN_RIGHT = 256};
 	
 //---------------------------------------------------------------------------------
 int main(void) {
 //---------------------------------------------------------------------------------
 	touchPosition touchXY;
 
-	irqSet(IRQ_VBLANK, Vblank);
+	Fury fury = {100,100};
 
-	consoleDemoInit();
 
-	iprintf("      Hello World\n");
-	iprintf("      Team KwaKwa\n");
+
+		videoSetMode(MODE_0_2D);
+		videoSetModeSub(MODE_0_2D);
+
+		vramSetBankA(VRAM_A_MAIN_SPRITE);
+		vramSetBankD(VRAM_D_SUB_SPRITE);
+
+		oamInit(&oamMain, SpriteMapping_1D_128, false);
+		oamInit(&oamSub, SpriteMapping_1D_128, false);
+
+
+		initFury(&fury, (u8*)furySpriteTiles);
+
+
+
  
 	while(1) {
-	
+
 		swiWaitForVBlank();
 		touchRead(&touchXY);
+		scanKeys();
 
-		// print at using ansi escape sequence \x1b[line;columnH 
-		iprintf("\x1b[10;0HFrame = %d",frame);
-		iprintf("\x1b[16;0HTouch x = %04X, %04X\n", touchXY.rawx, touchXY.px);
-		iprintf("Touch y = %04X, %04X\n", touchXY.rawy, touchXY.py);		
-	
+		int keys = keysHeld();
+
+
+		if(keys)
+		{
+			if(keys & KEY_LEFT)
+			{
+				fury.state = WALK;
+				fury.hFlip = true;
+				fury.anim_frame++;
+			}
+			if(keys & KEY_RIGHT)
+			{
+				fury.state = WALK;
+				fury.hFlip = false;
+				fury.anim_frame++;
+			}
+		}
+		else
+		{
+			fury.state = IDLE;
+			fury.anim_frame = 0;
+		}
+
+		animateFury(&fury);
+		showFury(&fury);
+
+		oamUpdate(&oamMain);
+		oamUpdate(&oamSub);
+
 	}
 
 	return 0;
