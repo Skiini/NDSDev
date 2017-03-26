@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 //ASSETS
-#include <fury.h>
+#include <norman.h>
 
 enum {SCREEN_TOP = 0, SCREEN_BOTTOM = 192, SCREEN_LEFT = 0, SCREEN_RIGHT = 256};
 	
@@ -21,7 +21,7 @@ int main(void) {
 //---------------------------------------------------------------------------------
 	touchPosition touchXY;
 
-	Fury fury = {100,100};
+	Norman fury = {100,100};
 
 
 
@@ -35,7 +35,7 @@ int main(void) {
 		oamInit(&oamSub, SpriteMapping_1D_128, false);
 
 
-		initFury(&fury, (u8*)furySpriteTiles);
+		initNorman(&fury, (u8*)normanSpriteTiles);
 
 
 
@@ -67,11 +67,11 @@ int main(void) {
 		else
 		{
 			fury.state = IDLE;
-			fury.anim_frame = 0;
+			fury.anim_frame++;
 		}
 
-		animateFury(&fury);
-		showFury(&fury);
+		animateNorman(&fury);
+		showNorman(&fury);
 
 		oamUpdate(&oamMain);
 		oamUpdate(&oamSub);

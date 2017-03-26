@@ -5,22 +5,22 @@
  *      Author: efarhan
  */
 
-#include <fury.h>
+#include "../include/norman.h"
 
 
-static int furyAnimFrames[] = {1,4,4};
-static int furyAnimOffset[] = {0,1,5};
+static int furyAnimFrames[] = {3,6,1};
+static int furyAnimOffset[] = {0,3,12};
 
-void initFury(Fury *sprite, u8* gfx)
+void initNorman(Norman *sprite, u8* gfx)
 {
 	sprite->sprite_gfx_mem = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
 
 	sprite->frame_gfx = (u8*)gfx;
 
-	dmaCopy(furySpritePal, SPRITE_PALETTE, 512);
+	dmaCopy(normanSpritePal, SPRITE_PALETTE, 512);
 }
 
-void animateFury(Fury *sprite)
+void animateNorman(Norman *sprite)
 {
 	int currentFrame = sprite->anim_frame/FURY_FRAMES_PER_ANIM;
 	if(currentFrame == furyAnimFrames[sprite->state])
@@ -35,7 +35,7 @@ void animateFury(Fury *sprite)
 	dmaCopy(offset, sprite->sprite_gfx_mem, 64*64);
 }
 
-void showFury(Fury *sprite)
+void showNorman(Norman *sprite)
 {
 	int posX = sprite->x;
 	if(sprite->hFlip)
