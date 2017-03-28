@@ -9,7 +9,8 @@
 #define INCLUDE_NORMAN_H_
 
 #include <nds.h>
-#include "normanSprite.h"
+#include <normanSprite.h>
+#include <physics.h>
 
 enum NormanAnimState
 {
@@ -32,7 +33,7 @@ typedef struct
 
 	int state;
 	int anim_frame;
-
+	int angle;
 	bool hFlip;
 }Norman;
 

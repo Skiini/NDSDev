@@ -5,7 +5,7 @@
  *      Author: efarhan
  */
 
-#include "../include/norman.h"
+#include <norman.h>
 
 
 static int furyAnimFrames[] = {3,6,1};
@@ -13,6 +13,7 @@ static int furyAnimOffset[] = {0,3,12};
 
 void initNorman(Norman *sprite, u8* gfx)
 {
+
 	sprite->sprite_gfx_mem = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
 
 	sprite->frame_gfx = (u8*)gfx;
@@ -40,6 +41,9 @@ void showNorman(Norman *sprite)
 	int posX = sprite->x;
 	if(sprite->hFlip)
 		posX-=64-48;
+	oamRotateScale(&oamMain, 0, degreesToAngle(sprite->angle), intToFixed(1, 8), intToFixed(1, 8));
 	oamSet(&oamMain, 0, posX, sprite->y, 0, 0, SpriteSize_64x64, SpriteColorFormat_256Color,
-				sprite->sprite_gfx_mem, -1, false, false, sprite->hFlip, false, false);
+				sprite->sprite_gfx_mem, 0, false, false, sprite->hFlip, false, false);
+
+
 }
