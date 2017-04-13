@@ -9,7 +9,19 @@
 #define INCLUDE_PHYSICS_H_
 
 
+class Rigidbody
+{
 
+};
 
+class Box
+{
+
+};
+
+class Circle
+{
+
+};
 
 #endif /* INCLUDE_PHYSICS_H_ */

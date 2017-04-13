@@ -6,5 +6,9 @@
  */
 
 #include <physics.h>
+#include <list>
+
+
+static std::list<Rigidbody> bodies;
 
 
