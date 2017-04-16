@@ -20,7 +20,19 @@ private:
 	int x,y;
 };
 
+class Rigidbody
+{
 
+};
 
+class Box
+{
+
+};
+
+class Circle
+{
+
+};
 
 #endif /* INCLUDE_PHYSICS_H_ */
