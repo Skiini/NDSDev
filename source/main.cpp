@@ -20,19 +20,22 @@ enum {SCREEN_TOP = 0, SCREEN_BOTTOM = 192, SCREEN_LEFT = 0, SCREEN_RIGHT = 256};
 int main(void) {
 //---------------------------------------------------------------------------------
 	touchPosition touchXY;
-	int puyo_length = 2;
+	int frame = 0;
+	const int puyo_length = 4;
 	Puyo puyo [puyo_length]= {
-			{0,100, SQUARE, RED, PUYO64 },
-			{100,100, CIRCLE, GREEN, PUYO32 }
+			{0,96, SQUARE, RED, PUYO64 },
+			{124,96, SQUARE, RED, PUYO64 },
+			{100,100, CIRCLE, GREEN, PUYO32 },
+			{32,50, SQUARE, BLUE, PUYO32 }
 	};
+
+	consoleDemoInit();
 
 
 
 	videoSetMode(MODE_0_2D);
-	videoSetModeSub(MODE_0_2D);
 
 	vramSetBankA(VRAM_A_MAIN_SPRITE);
-	vramSetBankD(VRAM_D_SUB_SPRITE);
 
 	vramSetBankF(VRAM_F_LCD);
 
@@ -51,6 +54,8 @@ int main(void) {
 		init_puyo(&(puyo[i]), i);
 	}
 
+	iprintf("Hello SAE Institute\n");
+	iprintf("\x1b[32mNDS DEV IS AWESOME\n");
  
 	while(1) {
 
@@ -83,6 +88,12 @@ int main(void) {
 		{
 			show_puyo(&(puyo[i]));
 		}
+
+		iprintf("\x1b[10;0HFrame = %d",frame);
+		iprintf("\x1b[16;0HTouch x = %04X, %04X\n", touchXY.rawx, touchXY.px);
+		iprintf("Touch y = %04X, %04X\n", touchXY.rawy, touchXY.py);
+
+		frame++;
 		swiWaitForVBlank();
 		oamUpdate(&oamMain);
 		oamUpdate(&oamSub);
