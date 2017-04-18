@@ -11,6 +11,7 @@
 
 #include <nds.h>
 #include <puyoSprite.h>
+#include <smallPuyoSprite.h>
 #include <physics.h>
 
 typedef enum
@@ -27,6 +28,12 @@ typedef enum
 	BLUE=2
 } PuyoColor;
 
+typedef enum
+{
+	PUYO64=0,
+	PUYO32=1
+} PuyoSize;
+
 
 typedef struct
 {
@@ -35,7 +42,9 @@ typedef struct
 
 	PuyoShape shape;
 	PuyoColor color;
+	PuyoSize size_format;
 
+	int sprite_index;
 	u16* sprite_gfx_mem;
 	u8*  frame_gfx;
 
@@ -44,8 +53,9 @@ typedef struct
 
 
 
-void initPuyo(Puyo *puyo, u8* gfx);
-void showPuyo(Puyo *puyo);
+void init_puyo(Puyo *puyo, int sprite_index);
+void animate_puyo(Puyo *puyo);
+void show_puyo(Puyo *puyo);
 
 #endif
 

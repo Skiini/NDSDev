@@ -20,8 +20,11 @@ enum {SCREEN_TOP = 0, SCREEN_BOTTOM = 192, SCREEN_LEFT = 0, SCREEN_RIGHT = 256};
 int main(void) {
 //---------------------------------------------------------------------------------
 	touchPosition touchXY;
-
-	Puyo puyo = {100,100, CIRCLE, BLUE };
+	int puyo_length = 2;
+	Puyo puyo [puyo_length]= {
+			{0,100, SQUARE, RED, PUYO64 },
+			{100,100, CIRCLE, GREEN, PUYO32 }
+	};
 
 
 
@@ -31,12 +34,22 @@ int main(void) {
 	vramSetBankA(VRAM_A_MAIN_SPRITE);
 	vramSetBankD(VRAM_D_SUB_SPRITE);
 
-	oamInit(&oamMain, SpriteMapping_1D_128, false);
+	vramSetBankF(VRAM_F_LCD);
+
+
+	dmaCopy(puyoSpritePal, VRAM_F_EXT_SPR_PALETTE[0], puyoSpritePalLen);
+	dmaCopy(smallPuyoSpritePal, VRAM_F_EXT_SPR_PALETTE[1], smallPuyoSpritePalLen);
+
+	// set vram to ex palette
+	vramSetBankF(VRAM_F_SPRITE_EXT_PALETTE);
+
+	oamInit(&oamMain, SpriteMapping_1D_128, true);
 	oamInit(&oamSub, SpriteMapping_1D_128, false);
 
-
-	initPuyo(&puyo, (u8*)puyoSpriteTiles);
-
+	for(int i = 0; i<puyo_length;i++)
+	{
+		init_puyo(&(puyo[i]), i);
+	}
 
  
 	while(1) {
@@ -47,23 +60,30 @@ int main(void) {
 
 		int keys = keysHeld();
 
-
+		int delta_angle = 0;
 		if(keys)
 		{
 			if(keys & KEY_LEFT)
 			{
-				puyo.angle++;
+				delta_angle++;
 			}
 			if(keys & KEY_RIGHT)
 			{
-				puyo.angle--;
+				delta_angle--;
 			}
 		}
 
+		for(int i = 0; i<puyo_length;i++)
+		{
+			puyo[i].angle += delta_angle;
+			animate_puyo(&(puyo[i]));
+		}
 
-
-		showPuyo(&puyo);
-
+		for(int i = 0; i<puyo_length;i++)
+		{
+			show_puyo(&(puyo[i]));
+		}
+		swiWaitForVBlank();
 		oamUpdate(&oamMain);
 		oamUpdate(&oamSub);
 
