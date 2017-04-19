@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 //ASSETS
-#include <norman.h>
+#include <puyo.h>
 
 enum {SCREEN_TOP = 0, SCREEN_BOTTOM = 192, SCREEN_LEFT = 0, SCREEN_RIGHT = 256};
 	
@@ -20,25 +20,42 @@ enum {SCREEN_TOP = 0, SCREEN_BOTTOM = 192, SCREEN_LEFT = 0, SCREEN_RIGHT = 256};
 int main(void) {
 //---------------------------------------------------------------------------------
 	touchPosition touchXY;
+	int frame = 0;
+	const int puyo_length = 4;
+	Puyo puyo [puyo_length]= {
+			{0,96, SQUARE, RED, PUYO64 },
+			{124,96, SQUARE, RED, PUYO64 },
+			{100,100, CIRCLE, GREEN, PUYO32 },
+			{32,50, SQUARE, BLUE, PUYO32 }
+	};
 
-	Norman fury = {100,100};
-
-
-
-		videoSetMode(MODE_0_2D);
-		videoSetModeSub(MODE_0_2D);
-
-		vramSetBankA(VRAM_A_MAIN_SPRITE);
-		vramSetBankD(VRAM_D_SUB_SPRITE);
-
-		oamInit(&oamMain, SpriteMapping_1D_128, false);
-		oamInit(&oamSub, SpriteMapping_1D_128, false);
-
-
-		initNorman(&fury, (u8*)normanSpriteTiles);
+	consoleDemoInit();
 
 
 
+	videoSetMode(MODE_0_2D);
+
+	vramSetBankA(VRAM_A_MAIN_SPRITE);
+
+	vramSetBankF(VRAM_F_LCD);
+
+
+	dmaCopy(puyoSpritePal, VRAM_F_EXT_SPR_PALETTE[0], puyoSpritePalLen);
+	dmaCopy(smallPuyoSpritePal, VRAM_F_EXT_SPR_PALETTE[1], smallPuyoSpritePalLen);
+
+	// set vram to ex palette
+	vramSetBankF(VRAM_F_SPRITE_EXT_PALETTE);
+
+	oamInit(&oamMain, SpriteMapping_1D_128, true);
+	oamInit(&oamSub, SpriteMapping_1D_128, false);
+
+	for(int i = 0; i<puyo_length;i++)
+	{
+		init_puyo(&(puyo[i]), i);
+	}
+
+	iprintf("Hello SAE Institute\n");
+	iprintf("\x1b[32mNDS DEV IS AWESOME\n");
  
 	while(1) {
 
@@ -48,31 +65,36 @@ int main(void) {
 
 		int keys = keysHeld();
 
-
+		int delta_angle = 0;
 		if(keys)
 		{
 			if(keys & KEY_LEFT)
 			{
-				fury.state = WALK;
-				fury.hFlip = true;
-				fury.anim_frame++;
+				delta_angle++;
 			}
 			else if(keys & KEY_RIGHT)
 			{
-				fury.state = WALK;
-				fury.hFlip = false;
-				fury.anim_frame++;
+				delta_angle--;
 			}
 		}
-		else
+
+		for(int i = 0; i<puyo_length;i++)
 		{
-			fury.state = IDLE;
-			fury.anim_frame++;
+			puyo[i].angle += delta_angle;
+			animate_puyo(&(puyo[i]));
 		}
 
-		animateNorman(&fury);
-		showNorman(&fury);
+		for(int i = 0; i<puyo_length;i++)
+		{
+			show_puyo(&(puyo[i]));
+		}
 
+		iprintf("\x1b[10;0HFrame = %d",frame);
+		iprintf("\x1b[16;0HTouch x = %04X, %04X\n", touchXY.rawx, touchXY.px);
+		iprintf("Touch y = %04X, %04X\n", touchXY.rawy, touchXY.py);
+
+		frame++;
+		swiWaitForVBlank();
 		oamUpdate(&oamMain);
 		oamUpdate(&oamSub);
 
