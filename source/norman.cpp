@@ -9,7 +9,7 @@
 
 
 static int furyAnimFrames[] = {3,6,1};
-static int furyAnimOffset[] = {0,3,12};
+static int furyAnimOffset[] = {0,3,9};
 
 void initNorman(Norman *sprite, u8* gfx)
 {
@@ -24,7 +24,7 @@ void initNorman(Norman *sprite, u8* gfx)
 void animateNorman(Norman *sprite)
 {
 	int currentFrame = sprite->anim_frame/FURY_FRAMES_PER_ANIM;
-	if(currentFrame == furyAnimFrames[sprite->state])
+	if(currentFrame >= furyAnimFrames[sprite->state])
 	{
 		sprite->anim_frame = 0;
 		currentFrame = 0;
@@ -43,7 +43,7 @@ void showNorman(Norman *sprite)
 		posX-=64-48;
 	oamRotateScale(&oamMain, 0, degreesToAngle(sprite->angle), intToFixed(1, 8), intToFixed(1, 8));
 	oamSet(&oamMain, 0, posX, sprite->y, 0, 0, SpriteSize_64x64, SpriteColorFormat_256Color,
-				sprite->sprite_gfx_mem, 0, false, false, sprite->hFlip, false, false);
+				sprite->sprite_gfx_mem, -1, false, false, sprite->hFlip, false, false);
 
 
 }

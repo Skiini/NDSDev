@@ -57,7 +57,7 @@ int main(void) {
 				fury.hFlip = true;
 				fury.anim_frame++;
 			}
-			if(keys & KEY_RIGHT)
+			else if(keys & KEY_RIGHT)
 			{
 				fury.state = WALK;
 				fury.hFlip = false;
